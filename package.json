@@ -1,0 +1,36 @@
+{
+  "name": "quantified-self-server",
+  "version": "0.0.0",
+  "description": "Simple server to receive quantified self data",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loganfuller/quantified-self-server.git"
+  },
+  "keywords": [
+    "health",
+    "quantified",
+    "self",
+    "tracking"
+  ],
+  "author": "Logan Fuller <fuller.logan@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loganfuller/quantified-self-server/issues"
+  },
+  "homepage": "https://github.com/loganfuller/quantified-self-server",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "dependencies": {
+    "mongodb": "^1.4.8",
+    "restify": "^2.8.2"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4"
+  }
+}
