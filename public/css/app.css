@@ -1,4 +1,8 @@
+.metricChart {
+    margin-top: 1em;
+}
+
 div#heartrateChart {
     width: 100%;
-    height: 650px;
+    height: 450px;
 }

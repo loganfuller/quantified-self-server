@@ -5,7 +5,9 @@ var HeartrateGraph = React.createClass({
         return {
             data: [],
             events: [],
-            bucketSizeSeconds: parseInt(this.props.bucketSizeSeconds)
+            bucketSizeSeconds: parseInt(this.props.bucketSizeSeconds),
+            startDate: null,
+            endDate: null
         };
     },
     updateData: function () {
@@ -22,15 +24,47 @@ var HeartrateGraph = React.createClass({
         this.updateData();
     },
     componentDidUpdate: function () {
-        var that = this,
-            i = 0;
-        $.plot($("#heartrateChart"), [_.map(that.state.data, function (obj) {
-            return [i++, obj.bps];
-        })]);
+        var that = this;
+        $.plot($("#heartrateChart"), [
+            {
+                data: _.map(that.state.data, function (obj) {
+                    return [obj.timestamp, obj.bps];
+                }),
+                label: "Heartrate (bps)"
+            }
+        ], {
+            xaxis: {
+                mode: "time"
+            }
+        });
+    },
+    handleBucketButtonClick: function(e) {
+        this.setState({bucketSizeSeconds: $(e.target).data("bucket-size")},
+            this.updateData);
     },
     render: function () {
         return(
-            <div id="heartrateChart"></div>
+            <div>
+                <div className="btn-toolbar" role="toolbar">
+                    <div className="btn-group">
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 1 ? " active" : "")} data-bucket-size="1">1s</button>
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 5 ? " active" : "")} data-bucket-size="5">5s</button>
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 30 ? " active" : "")} data-bucket-size="30">30s</button>
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 60 ? " active" : "")} data-bucket-size="60">1m</button>
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 300 ? " active" : "")} data-bucket-size="300">5m</button>
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 900 ? "a ctive" : "")} data-bucket-size="900">15m</button>
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 1800 ? " active" : "")} data-bucket-size="1800">30m</button>
+                        <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 3600 ? " active" : "")} data-bucket-size="3600">1h</button>
+                    </div>
+                    <div className="btn-group pull-right">
+                        <button type="button" className="btn btn-danger">End Date</button>
+                    </div>
+                    <div className="btn-group pull-right">
+                        <button type="button" className="btn btn-danger">Start Date</button>
+                    </div>
+                </div>
+                <div id="heartrateChart" className="metricChart"></div>
+            </div>
         );
     }
 });
@@ -59,6 +93,12 @@ var App = React.createClass({
                             </li>
                             <li className={this.state.activeMetric == "medication" ? "active" : ""}>
                                 <a href="#">Medication</a>
+                            </li>
+                            <li className={this.state.activeMetric == "bloodPressure" ? "active" : ""}>
+                                <a href="#">Blood Pressure</a>
+                            </li>
+                            <li className={this.state.activeMetric == "sleep" ? "active" : ""}>
+                                <a href="#">Sleep</a>
                             </li>
                         </ul>
                     </div>
