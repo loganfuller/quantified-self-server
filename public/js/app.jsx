@@ -7,16 +7,25 @@ var HeartrateGraph = React.createClass({
             events: [],
             bucketSizeSeconds: parseInt(this.props.bucketSizeSeconds),
             startDate: null,
-            endDate: null
+            endDate: null,
+            isLoading: false
         };
     },
     updateData: function () {
         var that = this;
-        $.get(this.props.dataUrl, {
-            bucketSizeSeconds: this.state.bucketSizeSeconds
-        }, function (data) {
-            that.setState({
-                data: data
+
+        if(this.state.isLoading) {
+            return;
+        }
+
+        this.setState({isLoading: true}, function() {
+            $.get(this.props.dataUrl, {
+                bucketSizeSeconds: this.state.bucketSizeSeconds
+            }, function (data) {
+                that.setState({
+                    data: data,
+                    isLoading: false
+                });
             });
         });
     },
@@ -24,17 +33,19 @@ var HeartrateGraph = React.createClass({
         this.updateData();
     },
     componentDidUpdate: function () {
-        var that = this;
-        $.plot($("#heartrateChart"), [
-            {
+        var that = this,
+            d = {
                 data: _.map(that.state.data, function (obj) {
                     return [obj.timestamp, obj.bps];
                 }),
                 label: "Heartrate (bps)"
-            }
-        ], {
+            };
+        $.plot($("#heartrateChart"), [d], {
             xaxis: {
                 mode: "time"
+            },
+            selection: {
+                mode: "x"
             }
         });
     },
@@ -55,6 +66,9 @@ var HeartrateGraph = React.createClass({
                         <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 900 ? "a ctive" : "")} data-bucket-size="900">15m</button>
                         <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 1800 ? " active" : "")} data-bucket-size="1800">30m</button>
                         <button onClick={this.handleBucketButtonClick} type="button" className={"btn btn-default" + (this.state.bucketSizeSeconds === 3600 ? " active" : "")} data-bucket-size="3600">1h</button>
+                    </div>
+                    <div className="btn-group">
+                        <i onClick={this.updateData} id="heartrateRefresh" className={"fa fa-refresh" + (this.state.isLoading ? " fa-spin" : "")}></i>
                     </div>
                     <div className="btn-group pull-right">
                         <button type="button" className="btn btn-danger">End Date</button>

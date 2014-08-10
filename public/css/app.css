@@ -6,3 +6,10 @@ div#heartrateChart {
     width: 100%;
     height: 450px;
 }
+
+.fa-refresh {
+    margin-left: 0.85em;
+    font-size: 1.25em;
+    margin-top: 0.4em;
+    cursor: pointer;
+}
