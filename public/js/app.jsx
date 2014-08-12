@@ -8,7 +8,15 @@ var HeartrateGraph = React.createClass({
             bucketSizeSeconds: parseInt(this.props.bucketSizeSeconds),
             startDate: null,
             endDate: null,
-            isLoading: false
+            isLoading: false,
+            ranges: {
+                xaxis: {
+                    currMin: null,
+                    currMax: null,
+                    origMin: null,
+                    origMax: null
+                }
+            }
         };
     },
     updateData: function () {
@@ -24,7 +32,13 @@ var HeartrateGraph = React.createClass({
             }, function (data) {
                 that.setState({
                     data: data,
-                    isLoading: false
+                    isLoading: false,
+                    ranges: {
+                        xaxis: {
+                            origMin: parseInt(data[0].timestamp),
+                            origMax: parseInt(data[data.length-1].timestamp)
+                        }
+                    }
                 });
             });
         });
@@ -40,33 +54,61 @@ var HeartrateGraph = React.createClass({
                 }),
                 label: "Heartrate (bps)"
             };
-        $.plot($("#heartrateChart"), [d], {
-            xaxis: {
-                mode: "time",
-                timezone: "browser"
-            },
-            selection: {
-                mode: "x"
-            }
-        });
-        $.plot($("#heartrateOverviewChart"), [d], {
-            series: {
-                lines: {
-                    show: true,
-                    lineWidth: 1
+
+        var mainChart = $.plot($("#heartrateChart"), [d], {
+                xaxis: {
+                    mode: "time",
+                    timezone: "browser",
+                    min: that.state.ranges.xaxis.currMin,
+                    max: that.state.ranges.xaxis.currMax
                 },
-                shadowSize: 0
-            }, xaxis: {
-                mode: "time",
-                timezone: "browser",
-                ticks: []
-            },
-            yaxis: {
-                ticks: []
-            },
-            selection: {
-                mode: "x"
-            }
+                selection: {
+                    mode: "x"
+                }
+            }),
+            overviewChart = $.plot($("#heartrateOverviewChart"), [d], {
+                series: {
+                    lines: {
+                        show: true,
+                        lineWidth: 1
+                    },
+                    shadowSize: 0
+                }, xaxis: {
+                    mode: "time",
+                    timezone: "browser",
+                    ticks: [],
+                    min: that.state.ranges.xaxis.origMin,
+                    max: that.state.ranges.xaxis.origMax
+                },
+                yaxis: {
+                    ticks: []
+                },
+                selection: {
+                    mode: "x"
+                }
+            });
+
+        $("#heartrateChart").bind("plotselected", function (event, ranges) {
+            $(this).unbind();
+            that.setState({
+                ranges: {
+                    xaxis: {
+                        currMin: ranges.xaxis.from,
+                        currMax: ranges.xaxis.to
+                    }
+                }
+            });
+        });
+        $("#heartrateOverviewChart").bind("plotselected", function (event, ranges) {
+            $(this).unbind();
+            that.setState({
+                ranges: {
+                    xaxis: {
+                        currMin: ranges.xaxis.from,
+                        currMax: ranges.xaxis.to
+                    }
+                }
+            });
         });
     },
     handleBucketButtonClick: function(e) {
