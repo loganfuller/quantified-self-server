@@ -1,12 +1,9 @@
-.metricChart {
-    margin-top: 1em;
-}
-
-div#heartrateChart {
+.mainChart {
     width: 100%;
     height: 450px;
+    margin-top: 1em;
 }
-div#heartrateOverviewChart {
+.overviewChart {
     margin-top: 0.75em;
     margin-left: auto;
     width: 97.55%;
@@ -19,3 +16,4 @@ div#heartrateOverviewChart {
     margin-top: 0.4em;
     cursor: pointer;
 }
+

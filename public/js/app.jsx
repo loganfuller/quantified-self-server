@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var HeartrateGraph = React.createClass({
+var MetricGraph = React.createClass({
     getInitialState: function () {
         return {
             data: [],
@@ -45,10 +45,10 @@ var HeartrateGraph = React.createClass({
                     memo.push([obj.timestamp, obj.bps]);
                     return memo;
                 }, []),
-                label: "Heartrate (bps)"
+                label: this.props.seriesLabel
             };
 
-        var mainChart = $.plot($("#heartrateChart"), [d], {
+        var mainChart = $.plot($("#mainChart"), [d], {
                 xaxis: {
                     mode: "time",
                     timezone: "browser",
@@ -59,7 +59,7 @@ var HeartrateGraph = React.createClass({
                     mode: "x"
                 }
             }),
-            overviewChart = $.plot($("#heartrateOverviewChart"), [d], {
+            overviewChart = $.plot($("#overviewChart"), [d], {
                 series: {
                     lines: {
                         show: true,
@@ -79,7 +79,7 @@ var HeartrateGraph = React.createClass({
                 }
             });
 
-        $("#heartrateChart").bind("plotselected", function (event, ranges) {
+        $("#mainChart").bind("plotselected", function (event, ranges) {
             $(this).unbind();
             that.setState({
                 ranges: {
@@ -90,7 +90,7 @@ var HeartrateGraph = React.createClass({
                 }
             });
         });
-        $("#heartrateOverviewChart").bind("plotselected", function (event, ranges) {
+        $("#overviewChart").bind("plotselected", function (event, ranges) {
             $(this).unbind();
             that.setState({
                 ranges: {
@@ -137,8 +137,8 @@ var HeartrateGraph = React.createClass({
                         <button type="button" className="btn btn-danger">Start Date</button>
                     </div>
                 </div>
-                <div id="heartrateChart" className="metricChart"></div>
-                <div id="heartrateOverviewChart" className="overviewChart"></div>
+                <div id="mainChart" className="mainChart"></div>
+                <div id="overviewChart" className="overviewChart"></div>
             </div>
         );
     }
@@ -178,9 +178,10 @@ var App = React.createClass({
                         </ul>
                     </div>
                     <div className="col-md-9">
-                        <HeartrateGraph
+                        <MetricGraph
                             dataUrl="/api/heartrate"
                             bucketSizeSeconds="300"
+                            seriesLabel="Heartrate (bps)"
                         />
                     </div>
                 </div>
@@ -193,5 +194,4 @@ React.renderComponent(
     <App />,
     document.getElementById("container")
 );
-
 
