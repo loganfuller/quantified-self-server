@@ -11,10 +11,8 @@ var HeartrateGraph = React.createClass({
             isLoading: false,
             ranges: {
                 xaxis: {
-                    currMin: null,
-                    currMax: null,
-                    origMin: null,
-                    origMax: null
+                    from: null,
+                    to: null
                 }
             }
         };
@@ -32,13 +30,7 @@ var HeartrateGraph = React.createClass({
             }, function (data) {
                 that.setState({
                     data: data,
-                    isLoading: false,
-                    ranges: {
-                        xaxis: {
-                            origMin: parseInt(data[0].timestamp),
-                            origMax: parseInt(data[data.length-1].timestamp)
-                        }
-                    }
+                    isLoading: false
                 });
             });
         });
@@ -49,9 +41,10 @@ var HeartrateGraph = React.createClass({
     componentDidUpdate: function () {
         var that = this,
             d = {
-                data: _.map(that.state.data, function (obj) {
-                    return [obj.timestamp, obj.bps];
-                }),
+                data: _.reduce(that.state.data, function (memo, obj, key) {
+                    memo.push([obj.timestamp, obj.bps]);
+                    return memo;
+                }, []),
                 label: "Heartrate (bps)"
             };
 
@@ -59,8 +52,8 @@ var HeartrateGraph = React.createClass({
                 xaxis: {
                     mode: "time",
                     timezone: "browser",
-                    min: that.state.ranges.xaxis.currMin,
-                    max: that.state.ranges.xaxis.currMax
+                    min: that.state.ranges.xaxis.from,
+                    max: that.state.ranges.xaxis.to
                 },
                 selection: {
                     mode: "x"
@@ -76,9 +69,7 @@ var HeartrateGraph = React.createClass({
                 }, xaxis: {
                     mode: "time",
                     timezone: "browser",
-                    ticks: [],
-                    min: that.state.ranges.xaxis.origMin,
-                    max: that.state.ranges.xaxis.origMax
+                    ticks: []
                 },
                 yaxis: {
                     ticks: []
@@ -93,8 +84,8 @@ var HeartrateGraph = React.createClass({
             that.setState({
                 ranges: {
                     xaxis: {
-                        currMin: ranges.xaxis.from,
-                        currMax: ranges.xaxis.to
+                        from: ranges.xaxis.from,
+                        to: ranges.xaxis.to
                     }
                 }
             });
@@ -104,12 +95,19 @@ var HeartrateGraph = React.createClass({
             that.setState({
                 ranges: {
                     xaxis: {
-                        currMin: ranges.xaxis.from,
-                        currMax: ranges.xaxis.to
+                        from: ranges.xaxis.from,
+                        to: ranges.xaxis.to
                     }
                 }
             });
         });
+
+        overviewChart.setSelection({
+            xaxis: {
+                from: that.state.ranges.xaxis.currMin,
+                to: that.state.ranges.xaxis.currMax
+            }
+        }, true);
     },
     handleBucketButtonClick: function(e) {
         this.setState({bucketSizeSeconds: $(e.target).data("bucket-size")},
