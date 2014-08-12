@@ -42,7 +42,27 @@ var HeartrateGraph = React.createClass({
             };
         $.plot($("#heartrateChart"), [d], {
             xaxis: {
-                mode: "time"
+                mode: "time",
+                timezone: "browser"
+            },
+            selection: {
+                mode: "x"
+            }
+        });
+        $.plot($("#heartrateOverviewChart"), [d], {
+            series: {
+                lines: {
+                    show: true,
+                    lineWidth: 1
+                },
+                shadowSize: 0
+            }, xaxis: {
+                mode: "time",
+                timezone: "browser",
+                ticks: []
+            },
+            yaxis: {
+                ticks: []
             },
             selection: {
                 mode: "x"
@@ -78,6 +98,7 @@ var HeartrateGraph = React.createClass({
                     </div>
                 </div>
                 <div id="heartrateChart" className="metricChart"></div>
+                <div id="heartrateOverviewChart" className="overviewChart"></div>
             </div>
         );
     }
