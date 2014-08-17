@@ -166,10 +166,10 @@ var App = React.createClass({
                                 this.state.activeMetric == "heartrate" ? "active" : ""}>
                                 <a href="#">Heartrate</a>
                             </li>
-                            <li className={this.state.activeMetric == "medication" ? "active" : ""}>
-                                <a href="#">Medication</a>
+                            <li className={"hide " + (this.state.activeMetric == "medication" ? "active" : "")}>
+                                <a href="#">Medication / Supplements</a>
                             </li>
-                            <li className={this.state.activeMetric == "bloodPressure" ? "active" : ""}>
+                            <li className={"hide " + (this.state.activeMetric == "bloodPressure" ? "active" : "")}>
                                 <a href="#">Blood Pressure</a>
                             </li>
                             <li className={this.state.activeMetric == "sleep" ? "active" : ""}>
